@@ -1,7 +1,7 @@
 
 const { auth } = require("../middleware/auth")
 const { validation } = require("../middleware/validation")
-const { signup, signin, getTeacher, getUserById, activeUser, getactiveUser } = require("../services/user.services")
+const { signup, signin, getTeacher, getUserById, activeUser, getactiveUser, removeActive } = require("../services/user.services")
 const { signupvalidation, signinvalidation } = require("../validation/user.validation")
 
 const router = require("express").Router()
