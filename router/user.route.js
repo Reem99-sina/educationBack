@@ -10,6 +10,8 @@ router.post("/login", validation(signinvalidation), signin)
 router.get("/getAllTeacher",getTeacher)
 router.post("/activeUser",auth(["student","teacher"]),activeUser)
 router.get("/getactiveUser",getactiveUser)
+router.patch("/patchactiveUser",removeActive)
+
 router.get("/:id",auth(["student"]),getUserById)
 // router.post("/addExamstoUser",auth(["admin"],))
 module.exports = router

@@ -101,6 +101,9 @@ module.exports.getactiveUser = async (req, res) => {
   res.status(200).json({ message: "done", user: data,token })
 }).catch((error)=>res.status(400).json({ message: "error", error }))
 };
+module.exports.removeActive=async(req,res)=>{
+  await userModel.updateMany({},{active:false},{new:true})
+}
 // module.exports.sendEXamstoUser=async(req,res)=>{
 //     const {exams,students}=req.body;
 //     const findAllStudent=await userModel.find({})
