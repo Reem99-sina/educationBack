@@ -8,6 +8,7 @@ module.exports.validation = (schema) => {
             schematype.forEach((key) => {
                 if (schema[key]) {
                     const resultValid = schema[key].validate(req[key], { abortEarly: false })
+                 
                     if (resultValid.error) {
                         validateArr.push(resultValid?.error?.details?.find((ele)=>ele?.message))
                     }

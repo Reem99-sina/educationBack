@@ -6,11 +6,18 @@ module.exports.signup = async (req, res) => {
     const { userName, email, password, role } = req.body;
     let existUser = await userModel.findOne({ email: email });
     if (existUser) {
-      res.status(400).json({ message: "email exist" });
+      res.status(400).json({email:"email exist" });
     } else {
-      const user = new userModel({ userName, email, password, role });
-      const saveUser = await user.save();
-      res.status(201).json({ message: "done signup" });
+      if(role){
+        const user = new userModel({ userName, email, password, role });
+        const saveUser = await user.save();
+        res.status(201).json({ message: "done signup" });
+      }else{
+        const user = new userModel({ userName, email, password, role:"student" });
+        const saveUser = await user.save();
+        res.status(201).json({ message: "done signup" });
+      }
+    
     }
   } catch (error) {
     res.status(500).json({ message: "error", error });
@@ -18,20 +25,20 @@ module.exports.signup = async (req, res) => {
 };
 module.exports.signin = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await userModel.findOne({ email }).populate([
+    const { email, password,active } = req.body;
+     await userModel.updateMany({},{active:false},{new:true})
+    const user = await userModel.findOneAndUpdate({ email },{active:active?active:false},{new:true}).populate([
       {
         path: "exams",
       },
       { path: "courses" },
     ]);
     if (!user) {
-      res.status(400).json({ message: "user not existed" });
+      res.status(400).json({ email: "user not existed" });
     } else {
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        res.status(400).json({ message: "password error" });
+        res.status(400).json({ password: "password wrong" });
       } else {
         const token = await jwt.sign(
           { id: user._id, isLogged: true },
@@ -68,6 +75,31 @@ module.exports.getUserById = async (req, res) => {
     { path: "courses" },
     { path: "preferCourses" },
   ]).then((data)=>res.status(200).json({ message: "done", user: data })).catch((error)=>res.status(400).json({ message: "error", error }))
+};
+module.exports.activeUser = async (req, res) => {
+  await userModel.findByIdAndUpdate(req?.user?.id,{active:req.body.active},{new: true}).populate([
+   {
+     path: "exams",
+   },
+   { path: "courses" },
+   { path: "preferCourses" },
+ ]).then((data)=>res.status(200).json({ message: "done", user: data })).catch((error)=>res.status(400).json({ message: "error", error }))
+};
+module.exports.getactiveUser = async (req, res) => {
+  await userModel.findOne({active:true}).populate([
+   {
+     path: "exams",
+   },
+   { path: "courses" },
+   { path: "preferCourses" },
+ ]).then(async(data)=>{
+  const token = await jwt.sign(
+    { id: data._id, isLogged: true },
+    process.env.JWT,
+    { expiresIn: "24h" }
+  );
+  res.status(200).json({ message: "done", user: data,token })
+}).catch((error)=>res.status(400).json({ message: "error", error }))
 };
 // module.exports.sendEXamstoUser=async(req,res)=>{
 //     const {exams,students}=req.body;

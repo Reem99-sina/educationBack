@@ -27,7 +27,7 @@ module.exports.getCourses = async (req, res) => {
 module.exports.postPeferCourse = async (req, res) => {
   try {
     const { id } = req?.params;
-    console.log(id, "id");
+ 
     const course = await courseModel.findById(id);
     await userModel
       .findById(req?.user?.id)
@@ -47,7 +47,7 @@ module.exports.postPeferCourse = async (req, res) => {
               {new: true}
             )
             .then((ele) => {
-              console.log(ele, "ele");
+              
               res.status(201).json({ message: "update prefer courses",user:ele });
             })
             .catch((error) => {

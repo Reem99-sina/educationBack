@@ -14,6 +14,7 @@ const userSchema = mongoose.Schema({
     exams: [{ type: mongoose.Schema.Types.ObjectId, ref: "exam" }],
     courses:[{ type: mongoose.Schema.Types.ObjectId, ref: "course" }],
     preferCourses:[{ type: mongoose.Schema.Types.ObjectId, ref: "course" }],
+    active:{type:Boolean,default:false},
     role:{type:String,default:"student", enum: ['student','teacher']}
 }, {
     timestamps: true
